@@ -9,6 +9,7 @@ d3.json(queryurl).then(function (data) {
 
 function createFeatures(earthquakeData) {
 
+    // Creating conditional for color based on depth
     function depthcolor(depth){
         if (depth <= 10 ) {
             return "#00FF00"
@@ -32,14 +33,14 @@ function createFeatures(earthquakeData) {
             return "#FF0000"
         }
     }
-
+    // Making settings for style in a function for easy access
     function style(data) {
         return {
             opacity: 0.5,
             fillOpacity: 0.5,
             fillColor: depthcolor(data.geometry.coordinates[2]),
             color: "#000000",
-            radius: data.properties.mag * 3,
+            radius: data.properties.mag * 5,
             weight: 0.7
         }
     }
@@ -103,6 +104,19 @@ function createMap(earthquakes) {
       collapsed: false
     }).addTo(myMap);
 
+    // Set up the legend
+    let legend = L.control({position: "bottomright"});
+    legend.onAdd = function (map) { 
+      let div = L.DomUtil.create('div', 'info legend'),
+      depth = [-10,10,30,50,70,90];
+      colors = ["#00FF00","#C0FF00", "#FFFF00","#FF8000", "#FF6000", "#FF0000" ];
 
+      for (var i = 0; i < depth.length; i++) {
+        div.innerHTML += "<i style= 'background: " + colors[i] + "'></i> " + depth[i] + (depth[i + 1] ? "&ndash;" + depth[ i + 1] + "<br>" : "+");
+        }
+        return div;
+        };
 
-}
+    // Adding legend to the map
+    legend.addTo(myMap)
+    }
